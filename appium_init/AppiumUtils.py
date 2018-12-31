@@ -1,8 +1,8 @@
 #coding:utf-8
 
-import time
+from time import sleep
 from appium import webdriver
-
+from selenium.common.exceptions import NoSuchElementException
 
 caps = {}
 
@@ -33,7 +33,7 @@ print(height)
 x1 = width*0.5
 y1 = height*0.25
 y2 = height*0.8
-time.sleep(3)
+sleep(3)
 print("滑动前")
 driver.swipe(x1,y1,x1,y2)
 print("滑动后")
@@ -41,9 +41,9 @@ print("滑动后")
 
 for i in range(5):
     print("第%d次滑屏"%i)
-    time.sleep(3)
+    sleep(3)
     driver.swipe(x1,y1,x1,y2)
-time.sleep(3)
+sleep(3)
 
 
 class AppiumUtils():
@@ -56,11 +56,11 @@ class AppiumUtils():
         x1 = width * 0.5
         y1 = height * 0.9
         y2 = height * 0.25
-        time.sleep(3)
+        sleep(3)
         print("滑动前")
         for i in range(n):
             print("第%d次滑屏" % i)
-            time.sleep(3)
+            sleep(3)
             driver.swipe(x1, y1, x1, y2)
 
     def swipeToDown(self,driver, n = 5):
@@ -69,11 +69,11 @@ class AppiumUtils():
         x1 = width*0.5
         y1 = height*0.25
         y2 = height*0.9
-        time.sleep(3)
+        sleep(3)
         print("滑动前")
         for i in range(n):
             print("第%d次滑屏" % i)
-            time.sleep(3)
+            sleep(3)
             driver.swipe(x1, y1, x1, y2)
 
     def swipeToLeft(self, driver, n = 5):
@@ -83,11 +83,11 @@ class AppiumUtils():
         x2 = width*0.2
         y1 = height*0.5
 
-        time.sleep(3)
+        sleep(3)
         print("滑动前")
         for i in range(n):
             print("第%d次滑屏" % i)
-            time.sleep(3)
+            sleep(3)
             driver.swipe(x1, y1, x2, y1)
 
 
@@ -98,29 +98,52 @@ class AppiumUtils():
         x2 = width*0.8
         y1 = height*0.5
 
-        time.sleep(3)
+        sleep(3)
         print("滑动前")
         for i in range(n):
             print("第%d次滑屏" % i)
-            time.sleep(3)
+            sleep(3)
             driver.swipe(x1, y1, x2, y1)
 
 
 
-# TODO  处理driver1，判断元素存在
-    def isElementExits(self, driver1, by):
+# TODO  处理对应不同的获取元素方法的处理。并判断元素是否存在
+    def isElementExits(self, identifyBy, c):
+        sleep()
+        flag = None
         try:
-            driver.find_element(by)
+            if identifyBy == 'id':
+                driver.find_element_by_id(c)
+            elif identifyBy == 'xpath':
+                driver.find_element_by_xpath(c)
+            elif identifyBy == "class":
+                driver.find_element_by_class_name(c)
+            elif identifyBy == "link text":
+                driver.find_element_by_link_text(c)
+            elif identifyBy == "partial link text":
+                driver.find_element_by_partial_link_text(c)
+            elif identifyBy == "name":
+                driver.find_element_by_name(c)
+            elif identifyBy == "tag name":
+                driver.find_element_by_tag_name(c)
+            elif identifyBy == "css selector":
+                driver.find_element_by_css_selector(c)
+            flag = True
+
+        except NoSuchElementException as e:
+            flag = False
+        finally:
+            return flag
             print("元素存在")
             return True
 
-
-        except Exception as e:
-            print("元素不存在!error: "+ e)
-        # TODO 测试返回逻辑
-        return False
-
-
+#直接判断元素是否在
+    def findItem(self, el):
+        source = driver.page_source
+        if el in source:
+            return True
+        else:
+            return False
 
     def getEndCoordinate(self):
         pass
