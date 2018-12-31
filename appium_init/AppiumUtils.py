@@ -2,6 +2,7 @@
 
 from time import sleep
 from appium import webdriver
+import selenium
 from selenium.common.exceptions import NoSuchElementException
 
 caps = {}
@@ -16,7 +17,6 @@ caps['unicodeKeyboard'] = True
 caps['resetKeyboard'] = True
 driver = webdriver.Remote('http://127.0.0.1:4723/wd/hub', caps)
 
-
 # 获取屏幕的size
 size = driver.get_window_size()
 print(size)
@@ -26,7 +26,6 @@ print(width)
 # 获取屏幕高度 height
 height = size['height']
 print(height)
-
 
 
 # 执行滑屏操作,向下（下拉）滑动
@@ -137,6 +136,7 @@ class AppiumUtils():
             print("元素存在")
             return True
 
+# 方法二
 #直接判断元素是否在
     def findItem(self, el):
         source = driver.page_source
@@ -144,6 +144,38 @@ class AppiumUtils():
             return True
         else:
             return False
+
+    # // 判断元素是否可见
+
+    def findElement(self, mOperate):
+        '''
+        查找元素.mOperate是字典
+        operate_type：对应的操作
+        element_info：元素详情
+        find_type: find类型
+        '''
+        try:
+            # WebDriverWait(self.cts, common.WAIT_TIME).until(lambda x: elements_by(mOperate, self.cts))
+            return True
+        except selenium.common.exceptions.TimeoutException:
+            return False
+        except selenium.common.exceptions.NoSuchElementException:
+            print("找不到数据")
+            return False
+
+    # // 操作之前，需要判断元素是否存在
+
+    def operate_element(self, mOperate):
+        if self.findElement(mOperate):
+            elements = {
+                # common.CLICK: lambda: operate_click(mOperate, self.cts),
+                # common.TAP: lambda: operate_tap(mOperate["find_type"], self.cts,  mOperate["element_info"], arg),
+                # common.SEND_KEYS: lambda: send_keys(mOperate, self.cts),
+                # common.SWIPELEFT: lambda: opreate_swipe_left(mOperate, self.cts)
+            }
+            return elements[mOperate["operate_type"]]()
+        return False
+
 
     def getEndCoordinate(self):
         pass
